@@ -1,0 +1,75 @@
+Carbon<-read.table("http://stat4ds.rwth-aachen.de/data/Carbon.dat", header=TRUE)
+
+summary(Carbon$CO2) # 1stQu=lowerquartile, 3rd Qu=upperquartile
+
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  2.000   4.350   5.400   5.819   6.700   9.900 
+c(mean(Carbon$CO2),sd(Carbon$CO2),quantile(Carbon$CO2,0.90))
+
+                       90% 
+5.819355 1.964929 8.900000 
+boxplot(Carbon$CO2,xlab="CO2values",horizontal=TRUE)
+
+
+
+Crime<-read.table("http://stat4ds.rwth-aachen.de/data/Murder2.dat", header=TRUE)
+boxplot(Crime$murder~Crime$nation,xlab="Murder Rate",horizontal=TRUE)
+
+
+
+tapply(Crime$murder,Crime$nation,summary)
+
+$Canada
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  0.000   1.030   1.735   1.673   1.875   4.070 
+
+$US
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+  1.000   2.650   5.000   5.253   6.450  24.200 
+Bivariate Data
+
+GS<-read.table("http://stat4ds.rwth-aachen.de/data/Guns_Suicide.dat", header=TRUE)
+Guns<-GS$guns;Suicides<-GS$suicide
+plot(Guns,Suicides) # scatterplot with arguments x, y
+
+
+
+cor(Guns,Suicides) # correlation
+
+[1] 0.7386667
+
+
+PID<-read.table("http://stat4ds.rwth-aachen.de/data/PartyID.dat", header=TRUE)
+table(PID$race,PID$id) #forms contingency table (not shown here;see Table 1.1)
+
+       
+        Democrat Independent Republican
+  black      281          65         30
+  other      124          77         52
+  white      633         272        704
+options(digits=2)
+prop.table(table(PID$race,PID$id),margin=1) #Formargin=1, proportions
+
+       
+        Democrat Independent Republican
+  black     0.75        0.17       0.08
+  other     0.49        0.30       0.21
+  white     0.39        0.17       0.44
+mosaicplot(table(PID$race,PID$id)) #graphical portrayalof cell sizes
+
+
+
+Does the sample portray the population well?
+
+y1<-rnorm(30,100,16)# randomly sample normal distribution (Sec.2.5.1)
+mean(y1);sd(y1);hist(y1)#histogram(not shown)
+
+[1] 102
+[1] 18
+
+
+y2<-rnorm(30,100,16)# another random sample of size n=30
+mean(y2);sd(y2);hist(y2)
+
+[1] 101
+[1] 18
