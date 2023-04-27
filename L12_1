@@ -1,0 +1,102 @@
+Statistical Inference: Estimation
+
+
+
+
+
+Properties
+
+
+
+
+
+
+
+Asymptotic Properties
+
+
+
+
+
+Interval Estimation
+
+
+
+
+
+Maximum Likelihood Estimation
+
+Bernoulli example
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Properties
+
+
+
+Fisher’s information (Fisher information - Wikipedia):
+
+
+
+
+
+
+
+Check Section 4.2.5 of the textbook for a complete derivation.
+
+Optimization in MLE
+
+Normal
+
+
+
+norm.data <- rnorm(100,1,2)
+
+normal.lik<-function(theta,y){
+ mu <- theta[1]
+ sigma2 <- theta[2]
+ n <- length(y)
+ logl<- -n/2*log(2*pi) -n/2*log(sigma2) - (2*sigma2)^(-1)*sum((y-mu)^2)
+return(-logl)
+}
+
+optim(c(0,1),normal.lik,y=norm.data,method="BFGS")
+
+$par
+[1] 0.9078143 4.1350937
+
+$value
+[1] 212.8693
+
+$counts
+function gradient 
+      34       15 
+
+$convergence
+[1] 0
+
+$message
+NULL
+Exercises
+
+
+
+
+
