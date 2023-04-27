@@ -1,0 +1,180 @@
+Joint and Conditional Distributions
+
+
+
+
+
+
+
+
+GSS <- read.table("http://stat4ds.rwth-aachen.de/data/GSS2018.dat", header=T)
+gender <- factor(GSS$SEX, levels=c(1,2), labels = c("Male","Female"))
+smallgap <- factor(GSS$SMALLGAP, levels=c(1:5), labels = c("strongly agree", "agree","neutral","disagree","strongly disagree"))
+fairsociety <- table(gender,smallgap) # frequency table
+fairsociety
+
+        smallgap
+gender   strongly agree agree neutral disagree strongly disagree
+  Male               47   140     149      183                38
+  Female             58   156     192      159                26
+joint.prob <- fairsociety/sum(fairsociety) # joint cell proportions (total = 1)
+## add to joint prob. the row and column marginal probabilities:
+round(addmargins(joint.prob),3)
+
+        smallgap
+gender   strongly agree agree neutral disagree strongly disagree   Sum
+  Male            0.041 0.122   0.130    0.159             0.033 0.485
+  Female          0.051 0.136   0.167    0.139             0.023 0.515
+  Sum             0.091 0.258   0.297    0.298             0.056 1.000
+barplot(joint.prob, density=40, main="In a fair society, differences
+in people's standard of living should be small",xlab="", ylab="proportions",ylim=c(0,0.30),legend=rownames(joint.prob))
+
+
+
+Conditional Distribution and Mean
+
+
+
+and
+
+
+
+Trials with Multiple Categories: Multinomial Distribution
+
+
+
+
+
+
+
+
+
+dmultinom(c(0,1,11),prob=c(0.20, 0.30, 0.50))
+
+[1] 0.001757812
+Independence
+
+
+
+
+joint.prob <- prop.table(fairsociety) # derives proportion table
+# from a frequency table
+cond.prob1 <- prop.table(fairsociety, 1) # cond. prop. within rows
+cond.prob2 <- prop.table(fairsociety, 2) # cond. prop. within columns
+
+barplot(cond.prob2, density=40, main="In a fair society, differences
+in people's standard of living should be small",xlab="", ylab="conditional proportions",ylim=c(0,1))
+abline(h=0.5, col="blue")
+
+
+
+
+
+Markov Chains
+
+
+
+
+
+
+
+Correlation
+
+
+
+
+
+
+Correlation describes the strength of a linear association!
+
+
+
+
+
+probabilities <- c(0.2,0.1,0.0,0.1,0.2,0.1,0.0,0.1,0.2)
+x <- c(1,1,1,2,2,2,3,3,3)
+y <- c(1,2,3,1,2,3,1,2,3) #scores
+
+library(wCorr)
+
+wCorr v1.9.5
+weightedCorr(x, y, weights=probabilities, method="polyserial")
+
+[1] 0.700897
+probabilities <- c(0.15,0.00,0.15,0.00,0.40,0.00,0.15,0.00,0.15)
+weightedCorr(x, y, weights=probabilities, method="polyserial")
+
+[1] -3.330669e-16
+Bivariate Normal Distribution
+
+
+
+library(mvtnorm); library(plot3D)
+x <- (-40:40)/10; y <- x
+xy <-mesh(x,y) # function that generates a full 2-D or 3-D grid
+x0 <- as.vector(xy$x); y0 <- as.vector(xy$y); z0 <- cbind(x0, y0)
+# parameter-values of the 2-dim. normal distribution:
+mean <- c(0,0) # mean vector
+sigma <- matrix(c(1,0.7,0.7,1), ncol=2) # covariance matrix
+# pdf of a multivariate normal distribution:
+z1 <- dmvnorm(z0, mean, sigma) # pdf of multivariate normal
+z = matrix(z1, ncol = length(x))
+persp3D(z = z, x = x, y = y, theta = -30, phi = 30, colvar = z, col="steelblue",shade = 0.5, main="cor=0.7")
+
+
+
+library(fMultivar); library(graphics)
+x <- (-40:40)/10; X <- grid2d(x)
+z <- dnorm2d(X$x, X$y, rho = -0.8)
+X <- list(x = x, y = x, z = matrix(z, ncol = length(x)))
+# Perspective Density Plot:
+persp(X, theta = -30, phi = 25, expand = 0.5, col = "lightblue", ltheta = 120, shade = 0.15, ticktype = "detailed", xlab = "x", ylab = "y", zlab =" ")
+
+
+
+Simulation:
+
+
+
+Conditional variance 
+
+
+
+x<-rnorm(1000,70, 10) # simulate n=1000 from normal with mean=70 and standard dev=10
+y<-rnorm(1000,70 + 0.6*(x-70),6) #E(Y|x)=70+0.6*(x-70)
+plot(x,y)
+
+
+
+This idea can be extended to the multivariate normal distribution.
+
+Exercises
+
+
+
+
+
+
+
+
+
+
+An Important Exercise
+
+
+
+Q–Q plot - Wikipedia
+
+Y1 <- rnorm(1000); Y2 <- rt(1000, df=3) # generating random samples
+Y3 <- rexp(1000); Y4 <- runif(1000) # from four distributions
+
+par(mfrow=c(2, 2)) # plots 4 graphs in a 2x2 matrix format
+qqnorm(Y1, col='blue', main='Y1 ~ N(0,1)', xlim = c(-3,3), ylim = c(-3,3));
+abline(0,1)
+qqnorm(Y2, col='blue', main='Y2 ~ t(3)', xlim = c(-3,3), ylim = c(-3,3));
+abline(0,1)
+qqnorm(Y3, col='blue', main='Y3 ~ exp(1)', xlim = c(-3,3), ylim = c(-3,3));
+abline(0,1)
+qqnorm(Y4, col='blue', main='Y4 ~ uniform(0,1)', xlim = c(-3,3), ylim = c(-3,3));
+abline(0,1)
+
