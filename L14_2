@@ -1,0 +1,245 @@
+Multiple Linear Regression
+Linear Models with Multiple Explanatory Variables
+
+
+Recall Example: Scottish Hill Races
+
+Races<-read.table("http://stat4ds.rwth-aachen.de/data/ScotsRaces.dat", header=TRUE)
+head(Races,3) # timeM for men, timeW for women
+
+              race distance climb  timeM  timeW
+1       AnTeallach     10.6 1.062  74.68  89.72
+2     ArrocharAlps     25.0 2.400 187.32 222.03
+3 BaddinsgillRound     16.4 0.650  87.18 102.48
+fit.dc<-lm(timeW~distance + climb,data=Races)
+summary(fit.dc)
+
+
+Call:
+lm(formula = timeW ~ distance + climb, data = Races)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-37.209  -8.637   0.235   8.504  33.901 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -14.5997     3.4680   -4.21 8.02e-05 ***
+distance      5.0362     0.1683   29.92  < 2e-16 ***
+climb        35.5610     3.7002    9.61 4.22e-14 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 13.96 on 65 degrees of freedom
+Multiple R-squared:  0.9641,    Adjusted R-squared:  0.963 
+F-statistic: 872.6 on 2 and 65 DF,  p-value: < 2.2e-16
+
+
+Interpreting Effects in Multiple Regression Models
+
+
+
+
+
+
+
+Association and Causation
+
+
+
+
+
+
+
+
+
+Confounding, Spuriousness and Conditional Independence
+
+
+
+
+
+
+Confounding - Wikipedia
+
+(see Sections 6.2.3 and 6.2.4 of the book)
+
+Example: Modeling Crime Rate in Florida
+
+
+
+Florida<-read.table("http://stat4ds.rwth-aachen.de/data/Florida.dat", header=TRUE)
+head(Florida,2)
+
+   County Crime Income   HS Urban
+1 ALACHUA   104   22.1 82.7  73.2
+2   BAKER    20   25.8 64.1  21.5
+summary(lm(Crime~HS,data=Florida))
+
+
+Call:
+lm(formula = Crime ~ HS, data = Florida)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-43.74 -21.36  -4.82  17.42  82.27 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) -50.8569    24.4507  -2.080   0.0415 *  
+HS            1.4860     0.3491   4.257 6.81e-05 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 25.12 on 65 degrees of freedom
+Multiple R-squared:  0.218, Adjusted R-squared:  0.206 
+F-statistic: 18.12 on 1 and 65 DF,  p-value: 6.806e-05
+summary(lm(Crime~HS + Urban, data=Florida))
+
+
+Call:
+lm(formula = Crime ~ HS + Urban, data = Florida)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-34.693 -15.742  -6.226  15.812  50.678 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  59.1181    28.3653   2.084   0.0411 *  
+HS           -0.5834     0.4725  -1.235   0.2214    
+Urban         0.6825     0.1232   5.539 6.11e-07 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 20.82 on 64 degrees of freedom
+Multiple R-squared:  0.4714,    Adjusted R-squared:  0.4549 
+F-statistic: 28.54 on 2 and 64 DF,  p-value: 1.379e-09
+cor(Florida$HS,Florida$Urban) # urbanization strongly positively correlated
+
+[1] 0.790719
+cor(Florida$Crime,Florida$Urban)
+
+[1] 0.6773678
+
+
+
+
+Least Squares Estimates in Multiple Regression
+
+
+
+
+
+
+Later, we will use linear algebra to solve this set of equations.
+
+Interaction between Explanatory Variables in Their Effects
+
+
+
+
+
+
+Recall Example: Scottish Hill Races
+
+Races<-read.table("http://stat4ds.rwth-aachen.de/data/ScotsRaces.dat", header=TRUE)
+head(Races,3) # timeM for men, timeW for women
+
+              race distance climb  timeM  timeW
+1       AnTeallach     10.6 1.062  74.68  89.72
+2     ArrocharAlps     25.0 2.400 187.32 222.03
+3 BaddinsgillRound     16.4 0.650  87.18 102.48
+summary(lm(timeW ~ distance + climb + distance:climb, data=Races))
+
+
+Call:
+lm(formula = timeW ~ distance + climb + distance:climb, data = Races)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-41.295  -7.589  -0.743   6.090  29.513 
+
+Coefficients:
+               Estimate Std. Error t value Pr(>|t|)    
+(Intercept)     -5.0162     6.6830  -0.751  0.45565    
+distance         4.3682     0.4332  10.083 7.61e-15 ***
+climb           23.9446     7.8579   3.047  0.00335 ** 
+distance:climb   0.6582     0.3943   1.669  0.09993 .  
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 13.78 on 64 degrees of freedom
+Multiple R-squared:  0.9656,    Adjusted R-squared:  0.964 
+F-statistic: 598.7 on 3 and 64 DF,  p-value: < 2.2e-16
+Cook’s Distance: Detecting Unusual and Influential Observations
+
+
+
+Leverage (statistics) - Wikipedia
+
+
+
+Races<-read.table("http://stat4ds.rwth-aachen.de/data/ScotsRaces.dat", header=TRUE)
+head(Races,3) # timeM for men, timeW for women
+
+              race distance climb  timeM  timeW
+1       AnTeallach     10.6 1.062  74.68  89.72
+2     ArrocharAlps     25.0 2.400 187.32 222.03
+3 BaddinsgillRound     16.4 0.650  87.18 102.48
+fit.dc<-lm(timeW~distance + climb,data=Races)
+res<-residuals(fit.dc);fitval<- fitted(fit.dc); leverage<-hatvalues(fit.dc)
+cooks.ds<-cooks.distance(fit.dc);tail(sort(cooks.ds),3)
+
+       55         2        41 
+0.1392402 0.2162927 9.0682767 
+hist(res) # Histogram display of residuals (not shown)
+
+
+
+plot(cooks.ds) # Plot of Cook's distance values (not shown)
+
+
+
+out<-cbind(Races$race, Races$timeW, fitval, res, leverage, cooks.ds, rank(cooks.ds))
+out[c(1,41,68),] # print output for the 1st, 41th and 68th observations
+
+                            fitval             res                
+1  "AnTeallach"    "89.72"  "76.5495971370441" "13.1704028629559" 
+41 "HighlandFling" "490.05" "456.148689887272" "33.9013101127278" 
+68 "Yetholm"       "71.55"  "76.8897752048972" "-5.33977520489718"
+   leverage             cooks.ds                   
+1  "0.0256060611271758" "0.00799666069978033"  "46"
+41 "0.630433759585242"  "9.0682766524142"      "68"
+68 "0.0163750766634276" "0.000824911126512746" "21"
+# **largest Cook's distance = 9.07 has rank 68 of 68 observations
+
+fit.dc2<-lm(timeW~distance + climb,data=Races[-41,])# re-fit without observ.41
+summary(fit.dc2)
+
+
+Call:
+lm(formula = timeW ~ distance + climb, data = Races[-41, ])
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-28.4353  -6.1442  -0.1459   7.0130  29.8179 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   -8.931      3.281  -2.723  0.00834 ** 
+distance       4.172      0.240  17.383  < 2e-16 ***
+climb         43.852      3.715  11.806  < 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 12.23 on 64 degrees of freedom
+Multiple R-squared:  0.952, Adjusted R-squared:  0.9505 
+F-statistic: 634.3 on 2 and 64 DF,  p-value: < 2.2e-16
+Exercises
+
+
+
+
+
+
