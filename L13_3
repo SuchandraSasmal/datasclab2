@@ -1,0 +1,284 @@
+Testing (Contd.) and Some Extra Topics
+Duality between Significance Tests and Confidence Intervals
+
+
+
+
+
+
+Effect of Sample Size: Statistical versus Practical Significance
+
+
+
+
+
+Polid<-read.table("http://stat4ds.rwth-aachen.de/data/Polid.dat", header=TRUE)
+t.test(Polid$ideology,mu=4.0,alternative="two.sided")
+
+
+    One Sample t-test
+
+data:  Polid$ideology
+t = 3.8456, df = 2574, p-value = 0.0001232
+alternative hypothesis: true mean is not equal to 4
+95 percent confidence interval:
+ 4.052911 4.163012
+sample estimates:
+mean of x 
+ 4.107961 
+
+
+
+
+Significance Tests are Less Useful then Confidence Intervals
+
+
+
+(see Section 5.6.3 of the book for more details)
+
+Significance Tests and P-Values Can Be Misleading
+
+
+
+It is misleading to report test results only if they are statistically significant
+Some tests may be statistically significant just by chance
+Be wary of confirmation bias
+True effects are often smaller than reported estimates
+Replication of studies can reveal Type I errors
+It is incorrect to interpret the P-value as the probability that H0 is true
+
+
+
+
+(see Section 5.6.4 of the book for more details)
+
+Likelihood-Ratio Tests (LRT)
+The LRT is defined as follows:
+
+
+
+
+
+Proportion
+
+
+
+Example: Climate Change is a Major Threat
+
+prop.test(524,1008,p=0.50,"two.sided", correct=FALSE) #X-squared
+
+
+    1-sample proportions test without continuity correction
+
+data:  524 out of 1008, null probability 0.5
+X-squared = 1.5873, df = 1, p-value = 0.2077
+alternative hypothesis: true p is not equal to 0.5
+95 percent confidence interval:
+ 0.4889822 0.5505497
+sample estimates:
+        p 
+0.5198413 
+pihat<-524/1008
+Wald<-(pihat- 0.50)/sqrt(pihat*(1 -pihat)/1008)
+Wald^2 #square of Wald test stat
+
+[1] 1.589805
+LRStat<-2*524*log(pihat/0.50)+ 2*(1008-524)*log((1-pihat)/(1-0.50))
+LRStat
+
+[1] 1.587718
+1-pchisq(LRStat,1) # P-value=chi-squaredright-tailprobabilityfordf=1
+
+[1] 0.2076524
+library(proportion)
+ciAllx(524,1008,0.05)# showing 3 of 6 confidence intervals provided
+
+      method   x LowerLimit UpperLimit LowerAbb UpperAbb ZWI
+1       Wald 524  0.4889991  0.5506835       NO       NO  NO
+2    ArcSine 524  0.4889808  0.5506261       NO       NO  NO
+3 Likelihood 524  0.4889673  0.5506172       NO       NO  NO
+4      Score 524  0.4889822  0.5505497       NO       NO  NO
+5 Logit-Wald 524  0.4889626  0.5505691       NO       NO  NO
+6     Wald-T 524  0.4889989  0.5506836       NO       NO  NO
+
+
+Simulating the Exact Distribution of the Likelihood-Ratio Statistic
+
+
+
+LRT <- function(n, mu0, mu.hat){ # Poisson likelihood-ratio (LR) test statistic
+2*n*((mu0 - mu.hat) - mu.hat*log(mu0/mu.hat))}
+# Function returning vector of B values of LR test statistic
+# for the B simulated Poisson(mu0) samples of size n:
+simstat <- function(B, n, mu0){ 
+y <- rep(-1,B) # simulating Poisson
+for (i in 1:B){x <- rpois(n, mu0) # samples and applying
+ML <- mean(x) # LRT function to each
+y[i] <- LRT(n, mu0, ML)}
+return(y)}
+
+n <- 25; mu0 <- 5; B <- 100000 # B = number of Monte Carlo samples
+stat <- simstat(B, n, mu0)
+hist(stat, prob=TRUE, border="blue", breaks="Scott")
+
+fchi2 <- function(x) {dchisq(x, 1)}
+curve(fchi2, from=0, to=max(stat), add=TRUE, col="red4",lwd=2)
+
+
+
+quantile(stat,probs=c(0.8,0.9,0.95,0.99)) # simulated exact quantiles
+
+     80%      90%      95%      99% 
+1.630055 2.726231 3.744050 6.684528 
+qchisq(c(0.8, 0.9, 0.95, 0.99), 1) # chi-squared quantiles for df=1
+
+[1] 1.642374 2.705543 3.841459 6.634897
+# Function for computing the Poisson log(LRT):
+#----------------------------------------------------------------#
+logLRT <- function(n,lamb0,lamb.hat){
+2*n*((lamb0-lamb.hat)-lamb.hat*log(lamb0/lamb.hat))}
+#----------------------------------------------------------------#
+# Function returning a vector of length R with the logLRT-values
+# for the R simulated Poisson(lambda_0) samples of size n:
+#----------------------------------------------------------------#
+testat <- function(R,n,lamb0){ y <- rep(-1,R)
+for (i in 1:R){x <- rpois(n,5)
+MLE <- mean(x)
+y[i] <- logLRT(n,lamb0,MLE)}
+return(y) }
+#----------------------------------------------------------------#
+# Application of the testat function for n=25 and lambda0=5:
+n<- 25; lamb0 <- 5
+R <- 10000 # number of replicates
+T25 <- testat(R,25,lamb0); stat<- T25
+
+# Histogram of simulated logLRT values (lambda_0) for n=25:
+n1<-max(stat)
+hist(stat,prob=TRUE,border="blue", main=" ",xlab="-2log(LRT)")
+fchi2 <- function(x) {dchisq(x,1)}
+curve(fchi2, from=0, to=n1, add=TRUE)
+
+
+
+#----------------------------------------------------------------#
+# Simualted Quantiles (for n=25):
+quantile(stat, probs = c(0.8, 0.9, 0.95, 0.99))
+
+     80%      90%      95%      99% 
+1.630055 2.726231 3.993967 6.684528 
+qchisq(c(0.8, 0.9, 0.95, 0.99), 1) # chi^2(1) Quantiles
+
+[1] 1.642374 2.705543 3.841459 6.634897
+Nonparametric Tests
+
+
+A Permutation Test to Compare Two Groups
+
+
+
+Example: Petting versus Praise of Dogs
+
+
+
+library(EnvStats)
+
+
+Attaching package: 'EnvStats'
+The following objects are masked from 'package:stats':
+
+    predict, predict.lm
+The following object is masked from 'package:base':
+
+    print.default
+petting<-c(114,203, 217, 254,256,284,296)
+praise<-c(4,7, 24, 25,48,71,294)
+
+# compare medians
+test<-twoSamplePermutationTestLocation(petting,praise, fcn="median",alternative="greater",exact=FALSE,n.permutations=1000000)
+test$p.value
+
+[1] 0.017389
+#compare means
+test<-twoSamplePermutationTestLocation(petting,praise, fcn="mean", alternative="greater",exact=FALSE,n.permutations=1000000)
+test$p.value
+
+[1] 0.003671
+library(simpleboot)
+
+Simple Bootstrap Routines (1.1-7)
+b<-two.boot(petting,praise, median, R=100000)
+
+library(boot)
+boot.ci(b)
+
+Warning in boot.ci(b): bootstrap variances needed for studentized intervals
+BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 100000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = b)
+
+Intervals : 
+Level      Normal              Basic         
+95%   (169.0, 332.6 )   (198.0, 326.0 )  
+
+Level     Percentile            BCa          
+95%   (132, 260 )   (146, 272 )  
+Calculations and Intervals on Original Scale
+
+
+Bayesian t-test
+
+Bayes factor - Wikipedia
+
+Anor<-read.table("http://stat4ds.rwth-aachen.de/data/Anorexia.dat", header=TRUE)
+
+cogbehav <- Anor$after[Anor$therapy=="cb"] - Anor$before[Anor$therapy=="cb"]
+control <- Anor$after[Anor$therapy=="c"] - Anor$before[Anor$therapy=="c"]
+# requires the vectors "cogbehav" and "control" computed in Section 5.3.4
+t.anor <- t.test(cogbehav, control, var.equal=TRUE)
+t.anor
+
+
+    Two Sample t-test
+
+data:  cogbehav and control
+t = 1.676, df = 53, p-value = 0.09963
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.680137  7.593930
+sample estimates:
+mean of x mean of y 
+ 3.006897 -0.450000 
+library(BayesFactor)
+
+Loading required package: coda
+Loading required package: Matrix
+************
+Welcome to BayesFactor 0.9.12-4.4. If you have questions, please contact Richard Morey (richarddmorey@gmail.com).
+
+Type BFManual() to open the manual.
+************
+ttest.tstat(t = t.anor$statistic, n1=length(cogbehav), n2=length(control),
+simple = TRUE)
+
+      B10 
+0.8630774 
+ttestBF(x = cogbehav, y = control)
+
+Bayes factor analysis
+--------------
+[1] Alt., r=0.707 : 0.8630774 ±0.01%
+
+Against denominator:
+  Null, mu1-mu2 = 0 
+---
+Bayes factor type: BFindepSample, JZS
+Exercises
+
+
+
+
+
+
+
