@@ -1,0 +1,160 @@
+Network Analysis
+
+
+Example
+
+
+
+
+
+
+
+Graph Theory
+
+
+
+## Example 159
+library(igraph)
+
+
+Attaching package: 'igraph'
+The following objects are masked from 'package:stats':
+
+    decompose, spectrum
+The following object is masked from 'package:base':
+
+    union
+G <- sample_gnp(10, 0.5)
+plot(G)
+
+
+
+
+
+## Example 161
+library(igraph)
+N <- barabasi.game(10)
+plot(N)
+
+
+
+Adjacency Matrix
+
+
+
+## Example 163
+as_adjacency_matrix(G)
+
+10 x 10 sparse Matrix of class "dgCMatrix"
+                         
+ [1,] . 1 1 . . 1 1 1 . .
+ [2,] 1 . . 1 1 . 1 1 . 1
+ [3,] 1 . . . . . 1 1 . .
+ [4,] . 1 . . . 1 . 1 . .
+ [5,] . 1 . . . . 1 . 1 .
+ [6,] 1 . . 1 . . . . 1 .
+ [7,] 1 1 1 . 1 . . 1 1 .
+ [8,] 1 1 1 1 . . 1 . . .
+ [9,] . . . . 1 1 1 . . .
+[10,] . 1 . . . . . . . .
+
+
+
+## Example 165
+as_adjacency_matrix(N)
+
+10 x 10 sparse Matrix of class "dgCMatrix"
+                         
+ [1,] . . . . . . . . . .
+ [2,] 1 . . . . . . . . .
+ [3,] 1 . . . . . . . . .
+ [4,] 1 . . . . . . . . .
+ [5,] . 1 . . . . . . . .
+ [6,] . . . . 1 . . . . .
+ [7,] . . . 1 . . . . . .
+ [8,] 1 . . . . . . . . .
+ [9,] . . . . . . . 1 . .
+[10,] 1 . . . . . . . . .
+
+
+
+
+
+
+
+
+
+
+
+Properties of Laplacian Matrices
+
+
+
+
+
+## Example 173
+library(pracma)
+D = diag(c(3,3,3,2,1))
+L <- matrix(c(3, -1, -1, -1, 0, -1, 3, -1, 0, -1, -1, -1, 3, -1, 0, -1, 0, -1, 2, 0, 0, -1, 0, 0, 1), 5, 5)
+dim(nullspace(L))
+
+[1] 5 1
+
+
+## Example 174
+LL <- L
+LL[1,] <- LL[1,]/LL[1,1]
+LL[2,] <- LL[2,]/LL[2,2]
+LL[3,] <- LL[3,]/LL[3,3]
+LL[4,] <- LL[4,]/LL[4,4]
+LL[5,] <- LL[5,]/LL[5,5]
+E <- eigen(LL)
+E$values
+
+[1] 1.767592e+00 1.333333e+00 1.333333e+00 5.657415e-01 1.340063e-16
+sum(E$values)
+
+[1] 5
+Application
+
+
+### Practical Applications
+library(igraph)
+library(igraphdata)
+data("macaque")
+
+LM <- graph.laplacian(macaque)
+LM <- as.numeric(LM)
+LLM <- matrix(LM, 45, 45)
+dim(nullspace(LLM))
+
+[1] 45  1
+LM2 <- graph.laplacian(macaque, normalized = TRUE)
+LM2 <- as.numeric(LM2)
+LLM2 <- matrix(LM2, 45, 45)
+EE <- eigen(LLM2)
+sum(EE$values)
+
+[1] 45+0i
+The UK faculty dataset
+
+library(igraph)
+library(igraphdata)
+data("UKfaculty")
+LF <- graph.laplacian(UKfaculty)
+LF <- as.numeric(LF)
+LLF <- matrix(LF, 81, 81)
+dim(nullspace(LLF))
+
+[1] 81  1
+AF <- get.adjacency(as.undirected(UKfaculty))
+DF<-degree(UKfaculty)
+AAF <- matrix(as.numeric(AF), 81, 81)
+for(i in 1:81){
+    AAF[i, ] <- AAF[i,]/DF[i]
+}
+LF3 <- eye(81) - AAF
+EF <- eigen(LF3)
+sum(EF$values)
+
+[1] 81
