@@ -1,0 +1,167 @@
+Discrete Probability Distributions
+
+
+
+
+
+
+y=seq(0, 12, 1) # y values between 0 and 12 with increment of 1
+plot(y,dbinom(y,12,0.2),type="h") # plots binomial probabilities when n=12,pi=0.2
+
+
+
+dbinom(y,12,0.2)
+
+ [1] 6.871948e-02 2.061584e-01 2.834678e-01 2.362232e-01 1.328756e-01
+ [6] 5.315022e-02 1.550215e-02 3.321889e-03 5.190451e-04 5.767168e-05
+[11] 4.325376e-06 1.966080e-07 4.096000e-09
+plot(y,dbinom(y,12,0.5),type="h") # plots binomial probabilities when n=12,pi=0.2
+
+
+
+dbinom(y,12,0.5)
+
+ [1] 0.0002441406 0.0029296875 0.0161132813 0.0537109375 0.1208496094
+ [6] 0.1933593750 0.2255859375 0.1933593750 0.1208496094 0.0537109375
+[11] 0.0161132813 0.0029296875 0.0002441406
+Compute the mean, variance and skewness of the Binomial distribution.
+
+Example: Predicting Results of a Sample Survey
+
+
+
+
+mu<-function(n,pi){n*pi} # function: binomial mean
+sigma<-function(n,pi){sqrt(n*pi*1-pi)} # function: binomialstandard deviation
+Psd<-function(n,pi,k){pbinom(mu(n,pi)+k*sigma(n,pi),n, pi) - pbinom(mu(n,pi)-k*sigma(n,pi),n,pi)} # function:prob.within k std.dev.ofmean
+
+n=1500;pi=0.60
+Psd(n,pi,2) # probability within k=2 standard deviations of mean
+
+[1] 0.998295
+Psd(n,pi,3) # probability within k=3 standard deviations of mean
+
+[1] 0.9999976
+
+
+
+
+
+
+
+
+y=seq(0, 14, 1) # y values between 0 and 14 with increment of 1
+plot(y,dbinom(y,50000000,0.0000001),type="h") 
+
+
+
+dbinom(y,50000000,0.0000001)
+
+ [1] 0.006737945 0.033689730 0.084224332 0.140373894 0.175467375 0.175467379
+ [7] 0.146222815 0.104444866 0.065278039 0.036265575 0.018132786 0.008242175
+[13] 0.003434239 0.001320861 0.000471736
+plot(y,dpois(y,5),type="h")
+
+
+
+dpois(y,5)
+
+ [1] 0.0067379470 0.0336897350 0.0842243375 0.1403738958 0.1754673698
+ [6] 0.1754673698 0.1462228081 0.1044448630 0.0652780393 0.0362655774
+[11] 0.0181327887 0.0082421767 0.0034342403 0.0013208616 0.0004717363
+
+
+Continuous Probability Distributions
+
+
+
+
+
+
+pnorm(1)-pnorm(-1) # probability within 1 standard deviation of mean
+
+[1] 0.6826895
+pnorm(2)-pnorm(-2) # probability within 2 standard deviation of mean
+
+[1] 0.9544997
+pnorm(3)-pnorm(-3) # probability within 3 standard deviation of mean
+
+[1] 0.9973002
+probNormal <- function(a,b,mu,sigma){
+prob <- pnorm(b,mu,sigma)-pnorm(a,mu,sigma)
+low <- min(mu-4*sigma,a); up <- max(mu+4*sigma,b)
+curve(dnorm(x,mu,sigma), xlim=c(low,up), main=" ", xlab="y",
+ylab=expression(phi(y)), col="blue", lwd=2)
+x=seq(a,b,length=200)
+y=dnorm(x,mu,sigma)
+polygon(c(a,x,b),c(0,y,0),col="coral2")
+result <- paste("N(",mu,",",sigma^2,"): ",
+"P(",a,"< Y <",b,") =",signif(prob, digits=3))
+mtext(result,3, col="coral2")
+# text(low,0.15,paste(prob),cex=1,col="grey60")
+curve(dnorm(x,mu,sigma),col="blue", lwd=2,add=T)
+return(prob)}
+#-----------------------------------------------------------------------
+probNormal(2,5,3,3) # example
+
+
+
+[1] 0.3780661
+
+
+pnorm(550,500,100) #SAT = 550 is approximate 69thpercentile
+
+[1] 0.6914625
+pnorm(30, 18,6) #ACT = 30 is approximate 98thpercentile
+
+[1] 0.9772499
+
+
+
+
+
+
+
+
+
+
+Explore distributions here: Web Apps (artofstat.com)
+
+Quantiles
+
+
+
+
+# 0.05,0.40,0.95quantilesofexponential
+qexp(0.05,1) # distributionwithparameterlambda= 1.0
+
+[1] 0.05129329
+qexp(0.40,1) # 0.40 quantile is-log(1 - 0.40)/1.0=0.511
+
+[1] 0.5108256
+qexp(0.95,1) # 0.95 quantile is -log(1 - 0.95)/1.0=2.996
+
+[1] 2.995732
+
+
+X <- runif(1000000) # 1000000 randomly generated uniforms over [0,1]
+Y <- -log(1- X)/(0.50)
+mean(Y);sd(Y);
+
+[1] 2.000829
+[1] 1.997821
+hist(Y)  # Histogram of randomly generated Y values should resemble exponential pdf with lambda=0.50
+
+
+
+Exercises
+
+
+
+
+
+
+
+
+
+
