@@ -1,0 +1,146 @@
+Sampling Distributions
+Example: Predicting an Election Result from an Exit Poll
+
+
+Assume a 50-50 chance.
+
+rbinom(1,2271,0.50)/2271 # binomial experiment with n=2271,pi=0.50
+
+[1] 0.4962572
+results<-rbinom(1000000,2271, 0.50)/2271 # million sample proportions,
+mean(results);sd(results) # each having n =2271 and pi=0.50
+
+[1] 0.5000074
+[1] 0.0104936
+hist(results) # histogram of the million sample proportions
+
+
+
+
+
+These days simple random sampling of the population of voters is not feasible in taking a sample survey about an election.
+Sampling Distribution
+
+
+
+
+
+
+
+
+
+
+Law of Large Numbers
+
+
+
+
+mean(runif(10,0,100))
+
+[1] 49.41412
+mean(runif(1000, 0, 100))
+
+[1] 49.19663
+mean(runif(10000000,0,100))
+
+[1] 50.0055
+
+
+Central Limit Theorem
+
+A more precise statement:
+
+
+
+Binomial CLT
+
+CLT_binom <- function(B,n,p) {
+# B: number of iterations used to approximate the distribution of Xmean
+# n: sample size
+# p: success probability pi
+Y <- rbinom(B,n,p)
+Ymean <- Y/n # vector (length B) with the p-estimates: Algorithm 1 (2)
+var.mean <-p*(1-p)/n # variance of the estimator of p
+p.MC <- mean(Ymean) # Monte Carlo estimate of p
+varp.MC <- var(Ymean) # MC variance estimate of var.mean
+h <- hist(Ymean, col = "gray", probability=TRUE, main=paste("n=",n))
+xfit<-seq(0, 1,length=5000)
+yfit<-dnorm(xfit,mean=p,sd=sqrt(p*(1-p)/n))
+gr <- lines(xfit, yfit, col="blue",lwd=2)
+list(var.mean=var.mean, p.MC=p.MC, varp.MC=varp.MC) }
+
+par(mfrow=c(2,2)) # multiple graphs layout in a 2x2 table format
+CLT_binom(100000, 10, 0.3)
+
+$var.mean
+[1] 0.021
+
+$p.MC
+[1] 0.299299
+
+$varp.MC
+[1] 0.02101982
+CLT_binom(100000, 30, 0.3)
+
+$var.mean
+[1] 0.007
+
+$p.MC
+[1] 0.3001283
+
+$varp.MC
+[1] 0.007001842
+CLT_binom(100000, 100, 0.3)
+
+$var.mean
+[1] 0.0021
+
+$p.MC
+[1] 0.3000896
+
+$varp.MC
+[1] 0.002099831
+CLT_binom(100000, 1000, 0.3)
+
+
+
+$var.mean
+[1] 0.00021
+
+$p.MC
+[1] 0.3000255
+
+$varp.MC
+[1] 0.0002105071
+Poisson CLT
+
+pois_CLT <- function(n, mu, B) {
+# n: vector of 2 sample sizes [e.g. n <- c(10, 100)]
+# mu: mean parameter of Poisson distribution
+# B: number of simulated random samples from the Poisson
+par(mfrow = c(2, 2))
+for (i in 1:2){
+Y <- numeric(length=n[i]*B)
+Y <- matrix(rpois(n[i]*B, mu), ncol=n[i])
+Ymean <- apply(Y, 1, mean) # or, can do this with rowMeans(Y)
+barplot(table(Y[1,]), main=paste("n=", n[i]), xlab="y",
+col="lightsteelblue") # sample data dist. for first sample
+hist(Ymean, main=paste("n=",n[i]), xlab=expression(bar(y)),
+col="lightsteelblue") # histogram of B sample mean values
+} }
+
+# implement:with 100000 random sample sizes of 10 and 100, mean = 0.7
+n <- c(10, 100)
+pois_CLT(n, 0.7, 100000)
+
+
+
+Demonstrations: Web Apps (artofstat.com)
+
+Exercises
+
+
+
+
+Verify Fig. 3.4 (below) this using simulations.
+
