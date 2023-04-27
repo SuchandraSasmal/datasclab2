@@ -1,0 +1,319 @@
+Bootstrap
+The Bootstrap
+
+
+
+
+Bootstrapping (statistics) - Wikipedia
+
+Web Apps (artofstat.com)
+
+Example: Bootstrap Confidence Intervals for Library Data
+
+
+
+Books<-read.table("http://stat4ds.rwth-aachen.de/data/Library.dat", header=TRUE)
+head(Books,3)
+
+  C P
+1 1 3
+2 9 9
+3 4 4
+summary(Books$P)
+
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   3.00    9.00   17.00   21.98   19.00  140.00 
+boxplot(Books$P, xlab="Years since publication", horizontal=TRUE)
+
+
+
+library(boot)
+boot.results<-boot(Books$P,function(x,b){median(x[b])}, 10000) #function for data x
+boot.ci(boot.results) # resampling case b
+
+Warning in boot.ci(boot.results): bootstrap variances needed for studentized
+intervals
+BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 10000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = boot.results)
+
+Intervals : 
+Level      Normal              Basic         
+95%   (14.05, 22.87 )   (15.00, 23.00 )  
+
+Level     Percentile            BCa          
+95%   (11, 19 )   (11, 18 )  
+Calculations and Intervals on Original Scale
+sd(boot.results$t)
+
+[1] 2.248569
+
+
+library(boot)
+boot.results2<-boot(Books$P,function(x,b){sd(x[b])},100000)
+boot.ci(boot.results2)
+
+Warning in boot.ci(boot.results2): bootstrap variances needed for studentized
+intervals
+BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 100000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = boot.results2)
+
+Intervals : 
+Level      Normal              Basic         
+95%   (15.26, 38.12 )   (15.73, 38.33 )  
+
+Level     Percentile            BCa          
+95%   (13.26, 35.86 )   (16.38, 40.12 )  
+Calculations and Intervals on Original Scale
+sd(Books$P)
+
+[1] 25.79318
+sd(boot.results2$t)
+
+[1] 5.83115
+
+
+plot(Books$C,Books$P) # scatterplot of C and P shows positive trend
+
+
+
+library(boot)
+set.seed(54321) # ifwewantto be abletoreproduceresults
+boot_corr=boot(cbind(Books$C,Books$P),function(x,b){cor(x[b,1],x[b,2])}, 100000)
+boot_corr
+
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = cbind(Books$C, Books$P), statistic = function(x, 
+    b) {
+    cor(x[b, 1], x[b, 2])
+}, R = 1e+05)
+
+
+Bootstrap Statistics :
+     original      bias    std. error
+t1* 0.8121555 -0.01595873  0.09097654
+boot.ci(boot_corr,conf=0.90)
+
+Warning in boot.ci(boot_corr, conf = 0.9): bootstrap variances needed for
+studentized intervals
+BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 100000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = boot_corr, conf = 0.9)
+
+Intervals : 
+Level      Normal              Basic         
+90%   ( 0.6785,  0.9778 )   ( 0.7299,  1.0130 )  
+
+Level     Percentile            BCa          
+90%   ( 0.6113,  0.8944 )   ( 0.6224,  0.8973 )  
+Calculations and Intervals on Original Scale
+hist(boot_corr$t,xlab="Correlation",breaks="Scott")
+
+
+
+Bootstrap and Empirical Cumulative Distribution Function
+
+
+
+y <- rnorm(10, 100, 16)
+plot(ecdf(y), xlab="y", ylab="Empirical CDF", col="dodgerblue4") # ecdf = empirical cdf
+lines(seq(50, 150, by=.1), pnorm(seq(50,150,by=.1), 100, 16), col="red4", lwd=2)
+
+
+
+
+
+Steps:
+
+
+
+
+
+
+
+Library Data
+
+Books <- read.table("http://stat4ds.rwth-aachen.de/data/Library.dat", header=TRUE)
+head(Books,3)
+
+  C P
+1 1 3
+2 9 9
+3 4 4
+## without using the boot package
+n <- 54; nboot <- 100000
+Psample <- matrix(0, nboot, n) # matrix of nboot rows and n columns
+for (i in 1:nboot) Psample[i,] <- sample(Books$P, n, replace=TRUE)
+
+MedianBoot <- apply(Psample, 1, median) # finds median in each row
+quantile(MedianBoot, c(0.025, 0.975))
+
+ 2.5% 97.5% 
+ 11.0  18.5 
+sd(MedianBoot) # standard deviation of the bootstrapped medians
+
+[1] 2.19947
+SDBoot <- apply(Psample, 1, sd)
+quantile(SDBoot, c(0.025, 0.975)) # 95% percentile CI for standard deviation
+
+    2.5%    97.5% 
+13.47816 35.72565 
+UN Data
+
+library(boot)
+UN <- read.table("http://stat4ds.rwth-aachen.de/data/UN.dat", header=T)
+head(UN,3)
+
+     Nation  GDP  HDI  GII Fertility  CO2 Homicide Prison Internet
+1   Algeria 12.8 0.72 0.42       2.8  3.2      0.8    162       17
+2 Argentina 14.7 0.81 0.38       2.2  4.7      5.5    147       60
+3 Australia 42.3 0.93 0.11       1.9 16.5      1.1    130       83
+#.............. examples of functions ............................
+
+y.mean <- function(y, i){ # y: data vector; i: indices vector
+return(mean(y[i]))}
+y.median <- function(y, i){ # y: data vector; i: indices vector
+return(median(y[i]))}
+y.var <- function(y, i){ # y: data vector; i: indices vector
+return(var(y[i]))}
+
+set.seed(54321) # for reproducibility of the example
+b_median = boot(UN[,3], y.median, R=1000); b_median
+
+
+ORDINARY NONPARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = UN[, 3], statistic = y.median, R = 1000)
+
+
+Bootstrap Statistics :
+    original   bias    std. error
+t1*     0.86 -0.01548  0.03484155
+boot.ci(b_median, conf=0.90); plot(b_median)
+
+Warning in boot.ci(b_median, conf = 0.9): bootstrap variances needed for
+studentized intervals
+BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 1000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = b_median, conf = 0.9)
+
+Intervals : 
+Level      Normal              Basic         
+90%   ( 0.8182,  0.9328 )   ( 0.8400,  0.9450 )  
+
+Level     Percentile            BCa          
+90%   ( 0.775,  0.880 )   ( 0.775,  0.880 )  
+Calculations and Intervals on Original Scale
+
+
+## the Pearson correlation
+xy.cor <- function(y, i){
+v <- y[i,]
+return(cor(v[,1], v[,2], method='p'))
+}
+
+b_cor = boot(cbind(UN[,2], UN[,6]), xy.cor, R=1000)
+boot.ci(b_cor, conf=0.90); plot(b_cor)
+
+Warning in boot.ci(b_cor, conf = 0.9): bootstrap variances needed for
+studentized intervals
+BOOTSTRAP CONFIDENCE INTERVAL CALCULATIONS
+Based on 1000 bootstrap replicates
+
+CALL : 
+boot.ci(boot.out = b_cor, conf = 0.9)
+
+Intervals : 
+Level      Normal              Basic         
+90%   ( 0.5359,  0.8065 )   ( 0.5462,  0.8170 )  
+
+Level     Percentile            BCa          
+90%   ( 0.5319,  0.8028 )   ( 0.4879,  0.7811 )  
+Calculations and Intervals on Original Scale
+
+
+Parametric Bootstrap
+
+
+
+Binomial example
+
+
+
+alpha <- 0.05
+y = c(5, 2, 3, 1, 4, 2)
+m = 10 # known size of binomial
+n = length(y) # sample size (here: n=6)
+thetahat = mean(y)/m # MLE for theta=$\theta$
+
+nboot = 1000 # number of bootstrap samples to use
+# nboot parametric samples of size n:
+tmpdata = rbinom(n*nboot, m, thetahat)
+# bootstrap samples (organized in a matrix):
+bootstrapsample = matrix(tmpdata, nrow=n, ncol=nboot)
+# computation of bootstrap estimates thetahat.b:
+thetahat.b = colMeans(bootstrapsample)/m
+# derivation of percentile bootstrap CI:
+q.CI = quantile(thetahat.b, c(alpha/2,1-alpha/2)); q.CI
+
+     2.5%     97.5% 
+0.1666667 0.4000000 
+
+
+Gamma example
+
+
+
+library(boot)
+
+# ................ required functions ....................................
+
+y.median <- function(y, i){ # y: data vector; i: indices vector
+return(median(y[i]))}
+gamma.rg <- function(y,p){ # function to generate random gamma variates
+rgamma(length(y), shape=p[1], rate=p[2])}
+
+#.........................................................................
+
+y <- c(5.88,5.55,5.40,1.83,2.31,1.32,1.52,6.79,4.99,3.87,1.21,10.44,3.71,1.68,2.53,5.40,0.17,9.00,1.41,3.37,2.99,1.68,1.73,6.43,4.16)
+s <- 2; r <- 0.5
+p <- c(s,r)
+gamma_bootmed = boot(y, y.median, R=10000, sim = "parametric", ran.gen=gamma.rg, mle=p)
+gamma_bootmed
+
+
+PARAMETRIC BOOTSTRAP
+
+
+Call:
+boot(data = y, statistic = y.median, R = 10000, sim = "parametric", 
+    ran.gen = gamma.rg, mle = p)
+
+
+Bootstrap Statistics :
+    original     bias    std. error
+t1*     3.37 0.03333408   0.6313874
+round(median(gamma_bootmed$t),2)
+
+[1] 3.37
+round(sd(gamma_bootmed$t),2)
+
+[1] 0.63
+Exercises
+
+
