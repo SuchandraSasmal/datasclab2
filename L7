@@ -1,0 +1,118 @@
+Linear Programming
+Linear Programming
+
+
+
+
+
+
+The point (0,0) is inside this polyhedron.
+
+#{r echo = FALSE}
+#A <- matrix(c(1, 1, 1, 7, -1, 1, -1, 0, 0, -1), nrow = 5, ncol = 2, byrow = TRUE)
+#b <- c(7, 35, 3, 0, 0)
+A <- matrix(c(1, 1, 1, 7, -1, 1), nrow = 3, ncol = 2, byrow = TRUE)
+b <- c(7, 35, 3)
+
+library(gMOIP)
+plotPolytope(
+    A,
+    b,
+    type = rep("c", ncol(A)),
+    crit = "max",
+    faces = rep("c", ncol(A)),
+    plotFaces = TRUE,
+    plotFeasible = TRUE,
+    plotOptimum = FALSE,
+    labels = "coord"
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+obj <- c(2, 7)
+
+plotPolytope(
+   A,
+   b,
+   obj,
+   type = rep("c", ncol(A)),
+   crit = "max",
+   faces = rep("c", ncol(A)),
+   plotFaces = TRUE,
+   plotFeasible = TRUE,
+   plotOptimum = TRUE,
+   labels = "coord"
+)
+
+
+
+
+
+One can find more details on the simplex method here: PHPSimplex
+
+Data Example
+
+
+
+
+
+Re-formulated as follows:
+
+
+
+
+
+Re-formulated as follows:
+
+
+
+### Practical Applications
+A <- matrix(c(1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0 ,
+0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+0 , 0 , 0 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 1 , 0 ,
+0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 ,
+0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 ,
+0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 ,
+0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 ,
+0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 ,
+0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 ,
+0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 ,
+0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 ,
+0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 ,
+1 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 0 , 1 , 0 , 0 , 0 ,
+0 , 0 , 0 , 0 , 0 , 1), nrow = 11, ncol = 18, byrow = TRUE)
+
+f.con <- rbind(A, diag(18))
+f.rhs <- c(1298, 1948, 465, 605, 451, 338, 260, 183, 282, 127, 535, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0)
+
+f.obj <- c(39.99, 126.27, 102.70, 81.68, 38.81, 71.99, 31.21, 22.28, 321.04, 145.36, 33.82, 154.05, 64.19, 87.90, 107.98, 65.45, 39.08, 167.38)
+f.dir <- c("=", "=", "=", "=", "=", "=", "=", "=", "=", "=", "=", 
+        ">=", ">=", ">=", ">=", ">=", ">=", ">=", ">=", ">=", ">=", 
+        ">=", ">=", ">=", ">=", ">=", ">=", ">=", ">=")
+
+library(lpSolve)
+Sol <- lp ("min", f.obj, f.con, f.dir, f.rhs)
+Sol$objval
+
+[1] 245498.9
+Sol$solution
+
+ [1] 465   0 451   0 260 122   0   0   0   0 605   0 338   0  61 282 127 535
+Using Gurobi with R and Python (google.com)
+
+Exercise
+Solve the following linear programming problem:
+
+
+Solve the following problem using linear programming:
