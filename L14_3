@@ -1,0 +1,240 @@
+Variability in LM
+Variability in Linear Regression Models
+
+
+
+
+For the null model, we have
+
+
+
+We will later see that under normal linear models, the distribution of residual mean squares is the 
+distribution.
+
+Decomposing Variability
+
+
+
+
+
+
+
+R-Squared and Multiple Correlation
+
+
+
+
+
+
+
+
+
+Races<-read.table("http://stat4ds.rwth-aachen.de/data/ScotsRaces.dat", header=TRUE)
+head(Races,3) # timeM for men, timeW for women
+
+              race distance climb  timeM  timeW
+1       AnTeallach     10.6 1.062  74.68  89.72
+2     ArrocharAlps     25.0 2.400 187.32 222.03
+3 BaddinsgillRound     16.4 0.650  87.18 102.48
+fit.dc2<-lm(timeW~ distance +climb,data=Races[-41,])
+summary(fit.dc2) # for Races data file without Highland Fling
+
+
+Call:
+lm(formula = timeW ~ distance + climb, data = Races[-41, ])
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-28.4353  -6.1442  -0.1459   7.0130  29.8179 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept)   -8.931      3.281  -2.723  0.00834 ** 
+distance       4.172      0.240  17.383  < 2e-16 ***
+climb         43.852      3.715  11.806  < 2e-16 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 12.23 on 64 degrees of freedom
+Multiple R-squared:  0.952, Adjusted R-squared:  0.9505 
+F-statistic: 634.3 on 2 and 64 DF,  p-value: < 2.2e-16
+cor(Races[-41,]$timeW,fitted(fit.dc2)) # multiple correlation
+
+[1] 0.9756921
+(sigma(fit.dc2))^2
+
+[1] 149.4586
+(sd(Races[-41,]$timeW))^2
+
+[1] 3017.798
+Statistical Inference for Normal Linear Models
+
+
+
+
+
+
+
+
+Example: Normal Linear Model for Mental Impairment
+
+
+
+Mental<-read.table("http://stat4ds.rwth-aachen.de/data/Mental.dat", header=TRUE)
+head(Mental)
+
+  impair life ses
+1     17   46  84
+2     19   39  97
+3     20   27  24
+4     20    3  85
+5     20   10  15
+6     21   44  55
+attach(Mental)
+pairs(~impair+life+ ses) # scatter plot matrix for variable pairs (not shown)
+
+
+
+cor(cbind(impair,life,ses)) # correlation matrix
+
+           impair      life        ses
+impair  1.0000000 0.3722206 -0.3985676
+life    0.3722206 1.0000000  0.1233370
+ses    -0.3985676 0.1233370  1.0000000
+summary(lm(impair~life+ ses, data=Mental))
+
+
+Call:
+lm(formula = impair ~ life + ses, data = Mental)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.678 -2.494 -0.336  2.886 10.891 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 28.22981    2.17422  12.984 2.38e-15 ***
+life         0.10326    0.03250   3.177  0.00300 ** 
+ses         -0.09748    0.02908  -3.351  0.00186 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.556 on 37 degrees of freedom
+Multiple R-squared:  0.3392,    Adjusted R-squared:  0.3034 
+F-statistic: 9.495 on 2 and 37 DF,  p-value: 0.0004697
+Mental <- read.table("http://stat4ds.rwth-aachen.de/data/Mental.dat", header=TRUE)
+fit <- lm(impair ~ life + ses, data=Mental)
+summary(fit)
+
+
+Call:
+lm(formula = impair ~ life + ses, data = Mental)
+
+Residuals:
+   Min     1Q Median     3Q    Max 
+-8.678 -2.494 -0.336  2.886 10.891 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 28.22981    2.17422  12.984 2.38e-15 ***
+life         0.10326    0.03250   3.177  0.00300 ** 
+ses         -0.09748    0.02908  -3.351  0.00186 ** 
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 4.556 on 37 degrees of freedom
+Multiple R-squared:  0.3392,    Adjusted R-squared:  0.3034 
+F-statistic: 9.495 on 2 and 37 DF,  p-value: 0.0004697
+layout(matrix(1:4, 2, 2)) # multiple plots in 2x2 matrix layout
+plot(fit, which=c(1,2,4,5)) # diagnostic plots shown in Figure A6.1
+
+
+
+t Tests and Confidence Intervals for Individual Effects
+
+
+
+
+
+Multicollinearity: Nearly Redundant Explanatory Variables
+
+
+
+summary(lm(climb~timeW,data=Races))
+
+
+Call:
+lm(formula = climb ~ timeW, data = Races)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.66351 -0.21704 -0.04151  0.23325  0.89699 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+(Intercept) 0.375956   0.082231   4.572 2.18e-05 ***
+timeW       0.005076   0.000664   7.645 1.15e-10 ***
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.3945 on 66 degrees of freedom
+Multiple R-squared:  0.4696,    Adjusted R-squared:  0.4616 
+F-statistic: 58.44 on 1 and 66 DF,  p-value: 1.145e-10
+summary(lm(climb~timeW + timeM,data=Races))
+
+
+Call:
+lm(formula = climb ~ timeW + timeM, data = Races)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-1.50002 -0.24360 -0.05403  0.23647  0.86249 
+
+Coefficients:
+             Estimate Std. Error t value Pr(>|t|)    
+(Intercept)  0.345481   0.085152   4.057 0.000136 ***
+timeW        0.014440   0.007280   1.984 0.051528 .  
+timeM       -0.010752   0.008324  -1.292 0.201060    
+---
+Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+
+Residual standard error: 0.3925 on 65 degrees of freedom
+Multiple R-squared:  0.4829,    Adjusted R-squared:  0.467 
+F-statistic: 30.35 on 2 and 65 DF,  p-value: 4.912e-10
+cor(Races$timeM,Races$timeW)
+
+[1] 0.9958732
+
+
+Confidence Interval for 
+ and Prediction Interval for 
+
+
+
+
+
+newdata<-data.frame(life=44.42,ses=56.60)#mean values of life events and SES
+
+fit1<-lm(impair~life,data=Mental)
+predict(fit1,newdata,interval="confidence")
+
+       fit      lwr      upr
+1 27.29955 25.65644 28.94266
+predict(fit1,newdata,interval="predict")
+
+       fit      lwr      upr
+1 27.29955 16.77851 37.82059
+fit2<-lm(impair~life+ses, data=Mental)
+predict(fit2,newdata,interval="confidence")
+
+       fit      lwr      upr
+1 27.29948 25.83974 28.75923
+predict(fit2,newdata,interval="predict")
+
+       fit      lwr      upr
+1 27.29948 17.95257 36.64639
+Exercises
+
+
+
+
