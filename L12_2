@@ -1,0 +1,280 @@
+Confidence Intervals
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Large Sample Confidence Interval for the Mean
+
+
+
+Confidence Intervals for Proportions
+
+
+
+
+
+
+
+library(proportion)
+ciAllx(778,1497,0.05)
+
+      method   x LowerLimit UpperLimit LowerAbb UpperAbb ZWI
+1       Wald 778  0.4943974  0.5450148       NO       NO  NO
+2    ArcSine 778  0.4943829  0.5449787       NO       NO  NO
+3 Likelihood 778  0.4943405  0.5449894       NO       NO  NO
+4      Score 778  0.4943793  0.5449320       NO       NO  NO
+5 Logit-Wald 778  0.4943685  0.5449427       NO       NO  NO
+6     Wald-T 778  0.4943973  0.5450148       NO       NO  NO
+Alternative R package
+
+library(binom)
+binom.confint(778, 1497, conf.level=0.95, method="asymptotic") # Wald CI
+
+      method   x    n      mean     lower     upper
+1 asymptotic 778 1497 0.5197061 0.4943974 0.5450148
+binom.coverage(0.5, 1500, conf.level = 0.95, method = "asymptotic")
+
+      method   p    n  coverage
+1 asymptotic 0.5 1500 0.9472287
+binom.confint(778, 1497, conf.level=0.95, method="wilson") # Score CI
+
+  method   x    n      mean     lower    upper
+1 wilson 778 1497 0.5197061 0.4943793 0.544932
+binom.coverage(0.5, 1500, conf.level = 0.95, method = "wilson")
+
+  method   p    n  coverage
+1 wilson 0.5 1500 0.9472287
+Check Wilson’s method here: Binomial proportion confidence interval - Wikipedia
+
+With a smaller value of 
+
+binom.coverage(0.25, 20, conf.level=0.95, method="asymptotic")
+
+      method    p  n  coverage
+1 asymptotic 0.25 20 0.8948752
+binom.coverage(0.25, 20, .level=0.95, method="wilson")
+
+  method    p  n  coverage
+1 wilson 0.25 20 0.9347622
+binom.sim(M=1000, n=20, p=0.25, conf.level=0.95, methods="asymptotic")
+
+            mean     lower     upper     width
+asymptotic 0.882 0.8620049 0.9019951 0.3642858
+binom.sim(M=1000, n=20, p=0.25, conf.level=0.95, methods="wilson")
+
+        mean     lower     upper     width
+wilson 0.937 0.9202051 0.9504503 0.3493745
+Coverage
+
+
+
+
+
+You can explore here: Web Apps (artofstat.com) - go to Explore Coverage app
+
+Confidence Intervals for Means of Normal Populations
+
+
+
+
+
+Student’s t-distribution - Wikipedia
+
+
+
+Example: Estimating Mean Weight Change for Anorexic Girls
+
+
+
+Anorexia <- read.table("http://stat4ds.rwth-aachen.de/data/Anorexia.dat", header=TRUE)
+head(Anorexia,3) # first3 lines in Anorexiadatafile
+
+  subject therapy before after
+1       1      cb   80.5  82.2
+2       2      cb   84.9  85.6
+3       3      cb   81.5  81.4
+change<-Anorexia$after - Anorexia$before
+summary(change[Anorexia$therapy=="cb"]) # cb is cognitive behavioral therapy
+
+   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+ -9.100  -0.700   1.400   3.007   3.900  20.900 
+sd(change[Anorexia$therapy=="cb"]) # standard deviation of weight changes
+
+[1] 7.308504
+hist(change[Anorexia$therapy=="cb"]) # histogram of weight changevalues
+
+
+
+t.test(change[Anorexia$therapy=="cb"],conf.level=0.95)$conf.int
+
+[1] 0.2268902 5.7869029
+attr(,"conf.level")
+[1] 0.95
+t.test(change[Anorexia$therapy=="cb"],conf.level=0.99)$conf.int
+
+[1] -0.7432794  6.7570725
+attr(,"conf.level")
+[1] 0.99
+
+
+The UN data set
+
+zCI<- function(x, conf.level=0.95){
+# x: vector of the sample values
+mean(x)+c(-1,1)*qnorm((1+conf.level)/2)*sqrt(var(x)/length(x)) }
+
+UN <- read.table("http://stat4ds.rwth-aachen.de/data/UN.dat", header=TRUE) # We revisit the UN data file
+names(UN)
+
+[1] "Nation"    "GDP"       "HDI"       "GII"       "Fertility" "CO2"      
+[7] "Homicide"  "Prison"    "Internet" 
+t.test(UN$GDP, conf.level=0.95)$conf.int
+
+[1] 22.05311 31.60879
+attr(,"conf.level")
+[1] 0.95
+zCI(UN$GDP)
+
+[1] 22.19406 31.46784
+library(DescTools)
+MeanCI(UN$GDP, conf.level=0.95) # provides also the sampling mean
+
+    mean   lwr.ci   upr.ci 
+26.83095 22.05311 31.60879 
+Comparing Two Population Means
+
+Estimating 
+
+
+
+
+
+ CI for 
+ is
+
+
+
+
+
+
+
+Since the interval contains 
+, it is plausible that the population means are identical.
+
+Recall: Example for Anorexic Girls
+
+Anor<-read.table("http://stat4ds.rwth-aachen.de/data/Anorexia.dat", header=TRUE)
+head(Anor)
+
+  subject therapy before after
+1       1      cb   80.5  82.2
+2       2      cb   84.9  85.6
+3       3      cb   81.5  81.4
+4       4      cb   82.6  81.9
+5       5      cb   79.9  76.4
+6       6      cb   88.7 103.6
+tail(Anor)
+
+   subject therapy before after
+67      67       c   85.5  88.3
+68      68       c   84.4  84.7
+69      69       c   79.6  81.4
+70      70       c   77.5  81.2
+71      71       c   72.3  88.2
+72      72       c   89.0  78.8
+cogbehav<-Anor$after[Anor$therapy == "cb"]-Anor$before[Anor$therapy == "cb"]
+control<-Anor$after[Anor$therapy == "c"]-Anor$before[Anor$therapy == "c"]
+cbind(mean(cogbehav),sd(cogbehav),mean(control),sd(control))
+
+         [,1]     [,2]  [,3]     [,4]
+[1,] 3.006897 7.308504 -0.45 7.988705
+t.test(cogbehav,control,var.equal=TRUE,conf.level=0.95)
+
+
+    Two Sample t-test
+
+data:  cogbehav and control
+t = 1.676, df = 53, p-value = 0.09963
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.680137  7.593930
+sample estimates:
+mean of x mean of y 
+ 3.006897 -0.450000 
+t.test(cogbehav,control) # not assuming equal population standard deviations
+
+
+    Welch Two Sample t-test
+
+data:  cogbehav and control
+t = 1.6677, df = 50.971, p-value = 0.1015
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.7044632  7.6182563
+sample estimates:
+mean of x mean of y 
+ 3.006897 -0.450000 
+# Alternative approach
+library(DescTools)
+MeanDiffCI(cogbehav,control)
+
+  meandiff     lwr.ci     upr.ci 
+ 3.4568966 -0.7044632  7.6182563 
+Confidence Interval Comparing Two Proportions
+
+
+
+
+
+Example: Does Prayer Help Coronary Surgery Patients?
+
+
+
+prop.test(c(315,304),c(604,597),conf.level=0.95, correct=FALSE)
+
+
+    2-sample test for equality of proportions without continuity correction
+
+data:  c(315, 304) out of c(604, 597)
+X-squared = 0.18217, df = 1, p-value = 0.6695
+alternative hypothesis: two.sided
+95 percent confidence interval:
+ -0.04421536  0.06883625
+sample estimates:
+   prop 1    prop 2 
+0.5215232 0.5092127 
+library(PropCIs) # uses binomial success count and n for each group
+diffscoreci(315,604,304,597, conf.level=0.95) # 95% confidence interval for pi_1-pi_2
+
+
+
+
+data:  
+
+95 percent confidence interval:
+ -0.04418699  0.06873177
+BinomDiffCI(315,604,304,597, method="wald") # (x1,n1,x2,n3)
+
+            est      lwr.ci     upr.ci
+[1,] 0.01231045 -0.04421536 0.06883625
+BinomDiffCI(315,604,304,597, method="score")
+
+            est      lwr.ci     upr.ci
+[1,] 0.01231045 -0.04408985 0.06860258
+Exercises
+
+
+
+
+
+
