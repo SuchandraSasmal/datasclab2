@@ -1,0 +1,62 @@
+Random Variables and Probability Distributions
+
+
+
+
+
+
+
+
+
+
+
+
+see equation (2.1)
+
+
+
+
+
+
+
+
+Expectation of Random Variables
+
+
+y<-rbinom(10000000,3,0.50) # simulate 10000000 times the no.ofsuccesses in 3 trials
+head(y,10) # the first 10 of the 10 million observations generated
+
+ [1] 2 2 1 0 1 3 3 1 1 1
+mean(y);sd(y)
+
+[1] 1.499857
+[1] 0.8661477
+
+
+
+
+
+
+
+
+y<-runif(10000000, min=0, max=100) # runif simulates uniform random variable
+head(y,5) # first 5 of ten million generated (to 6 decimal places)
+
+[1]  8.704245 44.130930 48.851680 51.773064 25.940386
+mean(y);sd(y) # mean and standard deviation of ten million simulated uniform rv's
+
+[1] 50.00899
+[1] 28.86867
+
+
+
+
+Exercises
+
+
+Compute the expectation and variance of 
+ in terms of 
+.
+
+
+Compute the
