@@ -1,0 +1,176 @@
+Inner Products
+Inner Products
+
+
+In 
+, we have
+
+
+
+
+
+
+
+## Example 126
+u <- c(1, 5, 0)
+v <- c(1, 0, 3)
+sum(u * v)
+
+[1] 1
+## Example 128
+v <- c(1, 2, 3)
+sqrt(sum(v * v))
+
+[1] 3.741657
+## Example 129
+v <- c(1, 2, 3)
+u <- c(2, 2, 2)
+sqrt(sum((v - u)^2))
+
+[1] 1.414214
+Properties:
+
+
+
+Practical Application
+df <- USArrests
+df <- na.omit(df)
+df <- scale(df)
+# nstart is the number of random starting points
+clusters <- kmeans(df, 4, nstart = 10)
+library(factoextra)
+
+Loading required package: ggplot2
+Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa
+fviz_cluster(clusters, df)
+
+
+
+### Practical Applications
+library(animation)
+kmeans.ani(df, 4)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+fviz_nbclust(df, kmeans, method = "wss")
+
+
+
+k-means clustering - Wikipedia
+
+
+
+library(ggplot2)
+library(ggfortify)
+library(gridExtra)
+df <- USArrests
+df <- na.omit(df)
+df <- scale(df)
+pc <- prcomp(df, scale=TRUE)
+autoplot(pc, data=df)
+
+
+
+#pca<- princomp(data.frame(scale(df)))
+#pca$loadings
+
+Angles and Orthogonality
+
+
+
+
+
+
+
+
+
+
+
+
+## Example 137
+library(pracma)
+library(MASS)
+A <- matrix(c(1, 1, 1, 1, 1, 0, 0, 0, 1), 3, 3, byrow = TRUE)
+B <- orth(A)
+fractions(B)
+
+     [,1]     [,2]    
+[1,] -780/989  209/989
+[2,] -571/989 -571/989
+[3,] -153/724  571/724
+
+
+
+
+
+
+library(MASS)
+library(pracma)
+
+A <- matrix(c(1, 1, 1, 1, 1, 0, 0, 0, 1), 3, 3, byrow = TRUE)
+#A <-matrix(c(1,1,1,1,1,0,0,0,1),3,3,byrow=TRUE)
+Null(t(A))
+
+              [,1]
+[1,] -7.071068e-01
+[2,]  7.071068e-01
+[3,] -1.110223e-16
+fractions(Null(t(A)))
+
+     [,1]      
+[1,] -5741/8119
+[2,]  2378/3363
+[3,]          0
+rref(A)
+
+     [,1] [,2] [,3]
+[1,]    1    1    0
+[2,]    0    0    1
+[3,]    0    0    0
+
+
+Practical Applications
+
+
+
+
+library(ISLR)
+data(Hitters)
+D <- na.omit(Hitters)
+dim(Hitters)
+
+[1] 322  20
+Hitters[1,]
+
+               AtBat Hits HmRun Runs RBI Walks Years CAtBat CHits CHmRun CRuns
+-Andy Allanson   293   66     1   30  29    14     1    293    66      1    30
+               CRBI CWalks League Division PutOuts Assists Errors Salary
+-Andy Allanson   29     14      A        E     446      33     20     NA
+               NewLeague
+-Andy Allanson         A
+library(pracma)
+res <- odregress(as.matrix(D[,1:2]), as.matrix(D$Salary))
+res$coeff
+
+[1]  -43.53176  150.65796 1861.91571
+
+
+Exercises
+
+
+(see Vector projection - Wikipedia)
+
