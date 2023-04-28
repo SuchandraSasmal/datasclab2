@@ -1,0 +1,150 @@
+Change of Basis
+Coordinate Systems
+
+
+
+
+Consider the following bases:
+
+
+
+and
+
+
+
+
+
+library(pracma)
+B <- matrix(c(1, 0, 0, 1, 1, 0, 1, 1, 1), 3, 3, byrow = TRUE)
+v <- c(2, 4, 0)
+inv(B) %*% v
+
+     [,1]
+[1,]    2
+[2,]    2
+[3,]   -4
+Applications
+Working example
+### Practical Applications
+
+## library
+library(mvtnorm)
+## setting a seed to reproduce the same result
+set.seed(123)
+sigma <- matrix(c(4,2,2,3), ncol=2)
+x <- rmvnorm(n=500, mean=c(0,0), sigma=sigma)
+
+pca <- princomp(x)
+pca$loadings
+
+
+Loadings:
+     Comp.1 Comp.2
+[1,]  0.781  0.625
+[2,]  0.625 -0.781
+
+               Comp.1 Comp.2
+SS loadings       1.0    1.0
+Proportion Var    0.5    0.5
+Cumulative Var    0.5    1.0
+T <- pca$loadings
+D <- inv(T) %*% t(x)
+y <- t(D)
+plot(y)
+
+
+
+Credit Card data
+
+
+Classification (Statistical classification - Wikipedia)
+
+SVM (Support vector machine - Wikipedia)
+
+## Library for the Credit data set
+library(ISLR)
+
+## Libraries for Plotting our Results
+library(ggplot2)
+library(ggfortify)
+library(gridExtra)
+
+## for inv() function
+library(pracma)
+
+## Loading the data
+data(Credit)
+dim(Default)
+
+[1] 10000     4
+Default[1,]
+
+  default student  balance   income
+1      No      No 729.5265 44361.63
+credit.data <- Default[,3:4]
+summary(credit.data)
+
+    balance           income     
+ Min.   :   0.0   Min.   :  772  
+ 1st Qu.: 481.7   1st Qu.:21340  
+ Median : 823.6   Median :34553  
+ Mean   : 835.4   Mean   :33517  
+ 3rd Qu.:1166.3   3rd Qu.:43808  
+ Max.   :2654.3   Max.   :73554  
+#pc <- prcomp(credit.data, scale=TRUE)
+#autoplot(pc, data=Default, colour = "default")
+
+library(e1071)
+
+
+Attaching package: 'e1071'
+The following object is masked from 'package:pracma':
+
+    sigmoid
+z <- svm(default ~ ., Default[,c(1,3:4)])
+plot(z, Default[,c(1,3:4)])
+
+
+
+Data Science example
+
+
+
+Clustering (Cluster analysis - Wikipedia)
+
+dendrogram (Dendrogram - Wikipedia)
+
+df <- USArrests
+head(df)
+
+           Murder Assault UrbanPop Rape
+Alabama      13.2     236       58 21.2
+Alaska       10.0     263       48 44.5
+Arizona       8.1     294       80 31.0
+Arkansas      8.8     190       50 19.5
+California    9.0     276       91 40.6
+Colorado      7.9     204       78 38.7
+df <- na.omit(df)
+df <- scale(df)
+d <- dist(df, method = "euclidean")
+hc <- hclust(d)
+sub_grp <- cutree(hc, k = 4)
+library(factoextra)
+
+Welcome! Want to learn more? See two factoextra-related books at https://goo.gl/ve3WBa
+fviz_cluster(list(data = df, cluster = sub_grp))
+
+
+
+plot(hc, cex = 0.6)
+
+
+
+Exercise
+
+
+
+
+
+Recall the Auto data. First use PCA to first transform the data to 
+. Then, use SVM to generate a clas
