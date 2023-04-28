@@ -1,0 +1,54 @@
+Basis
+Spanning Sets and Bases
+
+
+
+
+
+
+
+
+
+
+Basis and Dimension
+
+
+
+
+
+
+
+
+
+
+Recall Null and Row Spaces of A
+
+library(pracma)
+library(MASS)
+A <-matrix(c(1,-1,4,2,0,-1,-1,-1,5),nrow=3,ncol=3,byrow=TRUE)
+rref(A)
+
+     [,1] [,2] [,3]
+[1,]    1    0 -0.5
+[2,]    0    1 -4.5
+[3,]    0    0  0.0
+Null(t(A))
+
+          [,1]
+[1,] 0.1078328
+[2,] 0.9704950
+[3,] 0.2156655
+Rank(A)
+
+[1] 2
+
+
+What is the dimension of the null space of A? What is the dimension of the row space of A?
+
+
+
+What is the Rank-Nullity Theorem? (see Rank–nullity theorem - Wikipedia)
+
+Exercise
+
+
