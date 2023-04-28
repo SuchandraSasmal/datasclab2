@@ -1,0 +1,107 @@
+Null and Row Spaces
+Null Space
+
+
+
+
+Recall the row reduced Echelon form (rref) of a matrix!
+
+library(pracma)
+#A <- matrix(c(1, -1, 4, 0, 2, 0, -1, 0, -1, -1, 5, 0), nrow=3, ncol=4, byrow=TRUE)
+A <- matrix(c(1, -1, 4, 2, 0, -1, -1, -1, 5), nrow=3, ncol=3, byrow=TRUE)
+rref(A)
+
+     [,1] [,2] [,3]
+[1,]    1    0 -0.5
+[2,]    0    1 -4.5
+[3,]    0    0  0.0
+Question: What is the null space?
+
+
+
+library(MASS)
+A <- matrix(c(1, -1, 4, 2, 0, -1, -1, -1, 5), nrow=3, ncol=3, byrow=TRUE)
+temp=Null(t(A))
+temp/temp[3]
+
+     [,1]
+[1,]  0.5
+[2,]  4.5
+[3,]  1.0
+## Example 101
+library(pracma)
+A <- matrix(c(1, -1, 4, 1, 2, 0, -1, -2, -1, -1, 5, 3),nrow=3, ncol=4, byrow=TRUE)
+#A <- matrix(c(1, -1, 4, 1, 0, 2, 0, -1, -2, 0, -1, -1, 5, 3, 0),nrow=3, ncol=5, byrow=TRUE)
+rref(A)
+
+     [,1] [,2] [,3] [,4]
+[1,]    1    0 -0.5   -1
+[2,]    0    1 -4.5   -2
+[3,]    0    0  0.0    0
+Null(t(A))
+
+           [,1]        [,2]
+[1,] -0.3245163  0.49302763
+[2,]  0.6935228  0.67894149
+[3,]  0.3835873 -0.08774679
+[4,] -0.5163100  0.53690102
+
+
+Question: When do we have a non-unique solution? How to find the complete set of solutions?
+
+See, for example, pp. 218-219 of the book
+
+Column Space and Row Space
+
+
+Row Space (A) = Column Space (AT)
+
+Recall the row reduced Echelon form of a matrix.
+
+How is the function “rref” related to the row space of A?
+
+library(pracma)
+A <- matrix(c(1, -1, 4, 2, 0, -1, -1, -1, 5), nrow=3, ncol=3, byrow=TRUE)
+#A <- matrix(c(1, -1, 4, 1, 2, 0, -1, -2, -1, -1, 5, 3), nrow=3, ncol=4, byrow=TRUE)
+rref(A) # row space
+
+     [,1] [,2] [,3]
+[1,]    1    0 -0.5
+[2,]    0    1 -4.5
+[3,]    0    0  0.0
+Null(t(A))
+
+          [,1]
+[1,] 0.1078328
+[2,] 0.9704950
+[3,] 0.2156655
+t(rref(t(A))) # column space
+
+     [,1] [,2] [,3]
+[1,]    1    0    0
+[2,]    0    1    0
+[3,]    1   -1    0
+## an alternative method
+orth(t(A)) # row space (as columns)
+
+           [,1]       [,2]
+[1,]  0.0766631 -0.9912088
+[2,]  0.2081673  0.1216796
+[3,] -0.9750842 -0.0519539
+nullspace(A)
+
+          [,1]
+[1,] 0.1078328
+[2,] 0.9704950
+[3,] 0.2156655
+orth(A) # column space
+
+           [,1]       [,2]
+[1,] -0.6067397 -0.5463823
+[2,]  0.1698111 -0.7986431
+[3,] -0.7765508  0.2522608
+Exercise
+
+Use the rref function
+Use the Null function
+Use the nul
